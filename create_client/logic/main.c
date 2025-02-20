@@ -28,7 +28,6 @@ int main(void)
     chat *shared_memory_ptr = NULL;  
     int shm_fd; // Файловый дескриптор
     open_shared_memory(&shared_memory_ptr,&shm_fd); //Открытие прослушивания разделяемой памяти
-
     initscr(); 
     cbreak();             // Отключаем буферизацию строк
     noecho();             // Отключаем отображение вводимых символов
@@ -49,7 +48,9 @@ int main(void)
     wrefresh(window_write);
 
     write_name charaster_write={window_write,window_message,width-2,Name,&shared_memory_ptr};
-    output_message arguments_for_function = {window_name,window_message,&shared_memory_ptr};
+    output_message arguments_for_function = {window_name,window_message,&shared_memory_ptr,
+    height-2, width-NAME_SIZE-2
+    };
     if (pthread_create(&thread_input, NULL, input_write, (void*)&charaster_write) != 0) {
         perror("Failed to create thread_input");
         exit(EXIT_FAILURE);
@@ -59,7 +60,6 @@ int main(void)
         perror("Failed to create thread_output");
         exit(EXIT_FAILURE);
     }
-
     // Ожидаем завершения потока
     pthread_join(thread_input, NULL);
     pthread_join(thread_output, NULL);

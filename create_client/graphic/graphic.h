@@ -2,7 +2,6 @@
 #define _GRAPHIC_H
 #include <ncurses.h>
 #include "pthread.h"
-
 #include "../logic/logic.h"
 
 // #define DARK_GREEN 2
@@ -29,12 +28,12 @@ typedef struct{
     WINDOW *win_name;
     WINDOW *win_message;
     chat **ptr;
+    int max_height_write_message;
+    int max_width_write_message;
 }output_message;
 // char Name_Writing(int *, int *, char* );
 // void Display_Chat_Adaptation(int *, int *);
 // void *NameWrapper(void *);
 void *input_write(void *);
 void *output_write(void *);
-void safe_mvwprintw(WINDOW*, int, int, const char*);
-void safe_mvwaddch(WINDOW*, int, int, char);
 #endif

@@ -6,10 +6,10 @@
 #include <sys/mman.h>
 #include <unistd.h>
 #include <semaphore.h>
-
+#include <string.h>
 
 #define MESSAGE_SIZE  40   // Количество символов в сообщении
-#define MESSAGE_COUNT 20  // Количество сообщений
+#define MESSAGE_COUNT 5  // Количество сообщений
 #define NAME_SIZE     20  // Количество символов в имени
 #define NAME_COUNT    6  // Количество имен
 
@@ -18,7 +18,8 @@
 
 typedef struct{
     char cout_people;
-    char message_array[MESSAGE_COUNT][NAME_SIZE+MESSAGE_SIZE+1];
+    char max_message_now;
+    char message_array[MESSAGE_COUNT][NAME_SIZE+MESSAGE_SIZE+2];
     char name_array[NAME_COUNT][NAME_SIZE];
 }chat;
 

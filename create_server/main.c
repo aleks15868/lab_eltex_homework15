@@ -32,15 +32,17 @@ int main() {
         exit(EXIT_FAILURE);
     }
     ptr->cout_people=0;
+    ptr->max_message_now=0;
      // Ждем, чтобы другая программа могла прочитать данные
     printf("Data written to shared memory. Press Enter to exit...\n");
-    while(flag!=27)
-    {
-        flag=getchar();
-        printf("Cout:%d  Flag:%d\n",ptr->cout_people,flag);
-    }
+    // while(flag!=27)
+    // {
+    //     flag=getchar();
+    //     printf("%d\n",ptr->max_message_now);
+        
+    // }
     
-    // getchar();
+    getchar();
 
     // Убираем отображение памяти
     if (munmap(ptr, SHM_SIZE) == -1) {

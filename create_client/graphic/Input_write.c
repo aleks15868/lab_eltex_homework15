@@ -2,11 +2,12 @@
 #include "graphic.h"
 void* input_write(void* arg) {
     char input[MESSAGE_SIZE];
+    char message_input[NAME_SIZE+MESSAGE_SIZE+2];
     int pos = 0;
-    int ch;
+    int ch, index_message;
     write_name* charaster_name = (write_name*)arg;
     int max_width = charaster_name->max_width_write > MESSAGE_SIZE ? MESSAGE_SIZE : charaster_name->max_width_write;
-
+    chat *shared_memory_ptr = *charaster_name->ptr;
     // Создаем или открываем именованный семафор
     sem_t *sem = sem_open(SEM_NAME, O_CREAT, 0644, 1);
     if (sem == SEM_FAILED) {
@@ -28,20 +29,22 @@ void* input_write(void* arg) {
             pthread_mutex_unlock(&ncurses_mutex);
             break;
         } else if (ch == 10) { //нажат Enter
-            input[ch] = '\0';
+            input[pos] = '\0';
             // Пытаемся захватить семафор
-            mvwprintw(charaster_name->win_write, 1, 1,"Process %d is trying to acquire the semaphore...\n", getpid());
+            snprintf(message_input, sizeof(message_input), "%s>:%s", charaster_name->name, input);
             if (sem_wait(sem) == -1) {
                 perror("sem_wait");
                 pthread_mutex_unlock(&ncurses_mutex);
                 sem_close(sem);
                 exit(EXIT_FAILURE);
             }
-
-            // Критическая секция
-            mvwprintw(charaster_name->win_write, 2, 1,"Process %d has entered the critical section.\n", getpid());
-            mvwprintw(charaster_name->win_write, 3, 1,"Process %d is leaving the critical section.\n", getpid());
-
+            for (index_message = MESSAGE_COUNT-1; index_message > 0; index_message--)
+            {
+                //переносим элемент на один вперед [0]=>[1]
+                strncpy(shared_memory_ptr->message_array[index_message], 
+                shared_memory_ptr->message_array[index_message-1], (NAME_SIZE+MESSAGE_SIZE+1)-1); 
+            }
+            strncpy(shared_memory_ptr->message_array[0], message_input, (NAME_SIZE+MESSAGE_SIZE+1)-1); //копируем ввод с клавиатуры в первый элемент массива
             // Освобождаем семафор
             if (sem_post(sem) == -1) {
                 perror("sem_post");
@@ -49,7 +52,14 @@ void* input_write(void* arg) {
                 sem_close(sem);
                 exit(EXIT_FAILURE);
             }
-
+            if (shared_memory_ptr->max_message_now>=MESSAGE_COUNT)
+            {
+                shared_memory_ptr->max_message_now=MESSAGE_COUNT;
+            }
+            else
+            {
+                shared_memory_ptr->max_message_now++;
+            }
             pos = 0;
             input[0] = '\0';
             for (int dx = 0; dx < max_width; dx++) mvwaddch(charaster_name->win, 1, 1 + dx, ' ');
