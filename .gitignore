@@ -11,3 +11,7 @@ node_modules/
 build/
 
 .vscode
+./object_client/*
+./object_server/*
+client
+server
