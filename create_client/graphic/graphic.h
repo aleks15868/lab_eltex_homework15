@@ -2,10 +2,7 @@
 #define _GRAPHIC_H
 #include <ncurses.h>
 #include "pthread.h"
-<<<<<<< HEAD
 
-=======
->>>>>>> 7940287e0339b2a6f3927c740bf521c0a16ab850
 #include "../logic/logic.h"
 
 // #define DARK_GREEN 2
@@ -22,15 +19,10 @@ extern pthread_mutex_t ncurses_mutex;
 
 typedef struct{
     WINDOW *win;
-<<<<<<< HEAD
     WINDOW *win_write;
     int max_width_write;
     char* name;
     chat **ptr;
-=======
-    int max_width_write;
-    char* name;
->>>>>>> 7940287e0339b2a6f3927c740bf521c0a16ab850
 }write_name;
 
 typedef struct{
