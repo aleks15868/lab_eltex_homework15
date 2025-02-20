@@ -7,7 +7,7 @@
 int flag_close = 0;
 
 // Инициализация мьютекса
-pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t ncurses_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 int main(void)
 {   int height, width, write_width;

@@ -14,7 +14,7 @@
 extern int flag_close;
 
 // Объявление мьютекса для синхронизации доступа к flag_close
-extern pthread_mutex_t mutex;
+extern pthread_mutex_t ncurses_mutex;
 
 typedef struct{
     WINDOW *win;

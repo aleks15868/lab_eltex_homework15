@@ -6,37 +6,39 @@ void* input_write(void* arg) {
     int ch;
     write_name* charaster_name = (write_name*)arg;
     int max_width = charaster_name->max_width_write > MESSAGE_SIZE ? MESSAGE_SIZE : charaster_name->max_width_write;
-    // Вводим текст
+
     while (1) {
+        pthread_mutex_lock(&ncurses_mutex); // Блокируем доступ к ncurses
         wrefresh(charaster_name->win); // Обновляем окно
+        pthread_mutex_unlock(&ncurses_mutex); // Разблокируем доступ
+
         ch = wgetch(charaster_name->win); // Считываем символ
 
-        if (ch == 27) { // Если нажата клавиша ESC
-            input[pos] = '\0'; // Завершаем строку
+        pthread_mutex_lock(&ncurses_mutex); // Блокируем перед изменением окна
+        if (ch == 27) {
+            input[pos] = '\0';
             flag_close = 27;
+            pthread_mutex_unlock(&ncurses_mutex);
             break;
-        } else if (ch == '\n') { // Если нажата клавиша Enter
-            input[ch] = '\0'; // Завершаем строку
+        } else if (ch == '\n') {
+            input[ch] = '\0';
             pos = 0;
             input[0] = '\0';
             for (int dx = 0; dx < max_width; dx++) mvwaddch(charaster_name->win, 1, 1 + dx, ' ');
-            // break;
-        } else if (ch == 127 || ch == 8) { // Если нажата клавиша Backspace
+        } else if (ch == 127 || ch == 8) {
             if (pos > 0) {
                 pos--;
-                mvwaddch(charaster_name->win, 1, 1 + pos, ' '); // Удаляем символ с экрана
-                wmove(charaster_name->win, 1, 1 + pos); // Возвращаем курсор на место
-
+                mvwaddch(charaster_name->win, 1, 1 + pos, ' ');
+                wmove(charaster_name->win, 1, 1 + pos);
             }
-        } else if (pos < max_width - 1) { // Если есть место в буфере
-            input[pos] = ch; // Сохраняем символ
-            mvwaddch(charaster_name->win, 1, 1 + pos, ch); // Выводим символ на экран
+        } else if (pos < max_width - 1) {
+            input[pos] = ch;
+            mvwaddch(charaster_name->win, 1, 1 + pos, ch);
             pos++;
         }
-
+        wrefresh(charaster_name->win);
+        pthread_mutex_unlock(&ncurses_mutex); // Разблокируем после обновления окна
     }
 
-    // Выводим введенный текст
-    wrefresh(charaster_name->win);
     pthread_exit(NULL);
 }
