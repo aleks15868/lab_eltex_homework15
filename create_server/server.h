@@ -7,6 +7,7 @@
 #include <fcntl.h>
 #include <sys/mman.h>
 #include <unistd.h>
+#include <semaphore.h>
 #define NAME_SIZE 20
 
 #define MESSAGE_SIZE  40   // Количество символов в сообщении
@@ -15,6 +16,7 @@
 #define NAME_COUNT    6  // Количество имен
 
 #define SHM_NAME "/my_shm" // Имя разделяемой памяти
+#define SEM_NAME "/my_semaphore" // Имя семафора
 
 typedef struct{
     char cout_people;

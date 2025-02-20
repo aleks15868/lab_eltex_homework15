@@ -2,8 +2,15 @@
 
 
 int main() {
-    char flag;
+    char flag=0;
     const char *shm_name = SHM_NAME;  // Имя разделяемой памяти
+
+    // Создаем или открываем именованный семафор
+    sem_t *sem = sem_open(SEM_NAME, O_CREAT, 0644, 1);
+    if (sem == SEM_FAILED) {
+        perror("sem_open");
+        exit(EXIT_FAILURE);
+    }
 
     // Создаем разделяемую память
     int shm_fd = shm_open(shm_name, O_CREAT | O_RDWR, 0666);
@@ -24,10 +31,16 @@ int main() {
         perror("mmap");
         exit(EXIT_FAILURE);
     }
-
+    ptr->cout_people=0;
      // Ждем, чтобы другая программа могла прочитать данные
     printf("Data written to shared memory. Press Enter to exit...\n");
-    getchar();
+    while(flag!=27)
+    {
+        flag=getchar();
+        printf("Cout:%d  Flag:%d\n",ptr->cout_people,flag);
+    }
+    
+    // getchar();
 
     // Убираем отображение памяти
     if (munmap(ptr, SHM_SIZE) == -1) {
@@ -43,5 +56,8 @@ int main() {
         perror("shm_unlink");
         exit(EXIT_FAILURE);
     }
+
+    // Удаляем семафор (если больше не нужен)
+    sem_unlink(SEM_NAME);
     return 0;
 }

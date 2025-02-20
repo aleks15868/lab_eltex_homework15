@@ -48,7 +48,7 @@ int main(void)
     wrefresh(window_name);
     wrefresh(window_write);
 
-    write_name charaster_write={window_write,width-2,Name};
+    write_name charaster_write={window_write,window_message,width-2,Name,&shared_memory_ptr};
     output_message arguments_for_function = {window_name,window_message,&shared_memory_ptr};
     if (pthread_create(&thread_input, NULL, input_write, (void*)&charaster_write) != 0) {
         perror("Failed to create thread_input");
