@@ -2,6 +2,7 @@
 
 
 int main() {
+<<<<<<< HEAD
     char flag=0;
     const char *shm_name = SHM_NAME;  // Имя разделяемой памяти
 
@@ -12,6 +13,11 @@ int main() {
         exit(EXIT_FAILURE);
     }
 
+=======
+    char flag;
+    const char *shm_name = SHM_NAME;  // Имя разделяемой памяти
+
+>>>>>>> 7940287e0339b2a6f3927c740bf521c0a16ab850
     // Создаем разделяемую память
     int shm_fd = shm_open(shm_name, O_CREAT | O_RDWR, 0666);
     if (shm_fd == -1) {
@@ -31,6 +37,7 @@ int main() {
         perror("mmap");
         exit(EXIT_FAILURE);
     }
+<<<<<<< HEAD
     ptr->cout_people=0;
      // Ждем, чтобы другая программа могла прочитать данные
     printf("Data written to shared memory. Press Enter to exit...\n");
@@ -41,6 +48,12 @@ int main() {
     }
     
     // getchar();
+=======
+
+     // Ждем, чтобы другая программа могла прочитать данные
+    printf("Data written to shared memory. Press Enter to exit...\n");
+    getchar();
+>>>>>>> 7940287e0339b2a6f3927c740bf521c0a16ab850
 
     // Убираем отображение памяти
     if (munmap(ptr, SHM_SIZE) == -1) {
@@ -56,8 +69,11 @@ int main() {
         perror("shm_unlink");
         exit(EXIT_FAILURE);
     }
+<<<<<<< HEAD
 
     // Удаляем семафор (если больше не нужен)
     sem_unlink(SEM_NAME);
+=======
+>>>>>>> 7940287e0339b2a6f3927c740bf521c0a16ab850
     return 0;
 }

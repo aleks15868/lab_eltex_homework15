@@ -7,6 +7,7 @@ void* input_write(void* arg) {
     write_name* charaster_name = (write_name*)arg;
     int max_width = charaster_name->max_width_write > MESSAGE_SIZE ? MESSAGE_SIZE : charaster_name->max_width_write;
 
+<<<<<<< HEAD
     // Создаем или открываем именованный семафор
     sem_t *sem = sem_open(SEM_NAME, O_CREAT, 0644, 1);
     if (sem == SEM_FAILED) {
@@ -14,6 +15,8 @@ void* input_write(void* arg) {
         exit(EXIT_FAILURE);
     }
     
+=======
+>>>>>>> 7940287e0339b2a6f3927c740bf521c0a16ab850
     while (1) {
         pthread_mutex_lock(&ncurses_mutex); // Блокируем доступ к ncurses
         wrefresh(charaster_name->win); // Обновляем окно
@@ -27,6 +30,7 @@ void* input_write(void* arg) {
             flag_close = 27;
             pthread_mutex_unlock(&ncurses_mutex);
             break;
+<<<<<<< HEAD
         } else if (ch == 10) { //нажат Enter
             input[ch] = '\0';
             // Пытаемся захватить семафор
@@ -50,6 +54,10 @@ void* input_write(void* arg) {
                 exit(EXIT_FAILURE);
             }
 
+=======
+        } else if (ch == '\n') {
+            input[ch] = '\0';
+>>>>>>> 7940287e0339b2a6f3927c740bf521c0a16ab850
             pos = 0;
             input[0] = '\0';
             for (int dx = 0; dx < max_width; dx++) mvwaddch(charaster_name->win, 1, 1 + dx, ' ');
@@ -68,8 +76,11 @@ void* input_write(void* arg) {
         pthread_mutex_unlock(&ncurses_mutex); // Разблокируем после обновления окна
     }
 
+<<<<<<< HEAD
     // Закрываем семафор
     sem_close(sem);
 
+=======
+>>>>>>> 7940287e0339b2a6f3927c740bf521c0a16ab850
     pthread_exit(NULL);
 }
