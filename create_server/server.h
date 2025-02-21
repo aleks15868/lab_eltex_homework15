@@ -19,11 +19,18 @@
 #define SEM_NAME "/my_semaphore" // Имя семафора
 
 typedef struct{
+    int id;
+    char name[NAME_SIZE];
+}name_un;
+
+typedef struct{
     char cout_people;
     char max_message_now;
     char message_array[MESSAGE_COUNT][NAME_SIZE+MESSAGE_SIZE+2];
-    char name_array[NAME_COUNT][NAME_SIZE];
+    name_un name_array[NAME_COUNT];
 }chat;
+
+
 
 #define SHM_SIZE sizeof(chat)  // Размер разделяемой памяти
 

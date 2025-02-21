@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <semaphore.h>
 #include <string.h>
+#include <sys/time.h>
 
 #define MESSAGE_SIZE  40   // Количество символов в сообщении
 #define MESSAGE_COUNT 5  // Количество сообщений
@@ -17,15 +18,20 @@
 #define SEM_NAME "/my_semaphore" // Имя семафора
 
 typedef struct{
+    int id;
+    char name[NAME_SIZE];
+}name_un;
+
+typedef struct{
     char cout_people;
     char max_message_now;
     char message_array[MESSAGE_COUNT][NAME_SIZE+MESSAGE_SIZE+2];
-    char name_array[NAME_COUNT][NAME_SIZE];
+    name_un name_array[NAME_COUNT];
 }chat;
 
 #define SHM_SIZE sizeof(chat)  // Размер разделяемой памяти
 
 void open_shared_memory(chat **, int *);
 void close_shared_memory(chat **, int *);
-
+int generate_unique_id();
 #endif

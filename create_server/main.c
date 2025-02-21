@@ -35,13 +35,6 @@ int main() {
     ptr->max_message_now=0;
      // Ждем, чтобы другая программа могла прочитать данные
     printf("Data written to shared memory. Press Enter to exit...\n");
-    // while(flag!=27)
-    // {
-    //     flag=getchar();
-    //     printf("%d\n",ptr->max_message_now);
-        
-    // }
-    
     getchar();
 
     // Убираем отображение памяти

@@ -12,6 +12,7 @@
 
 // Объявление глобальной переменной
 extern int flag_close;
+extern int uniq_id;
 
 // Объявление мьютекса для синхронизации доступа к flag_close
 extern pthread_mutex_t ncurses_mutex;
@@ -30,10 +31,13 @@ typedef struct{
     chat **ptr;
     int max_height_write_message;
     int max_width_write_message;
+    int max_height_write_name;
+    int max_width_write_name;
 }output_message;
 // char Name_Writing(int *, int *, char* );
 // void Display_Chat_Adaptation(int *, int *);
 // void *NameWrapper(void *);
 void *input_write(void *);
 void *output_write(void *);
+void Name_Writing(WINDOW *, char*);
 #endif

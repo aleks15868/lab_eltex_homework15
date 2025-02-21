@@ -5,6 +5,7 @@ void* input_write(void* arg) {
     char message_input[NAME_SIZE+MESSAGE_SIZE+2];
     int pos = 0;
     int ch, index_message;
+    int cout_people;
     write_name* charaster_name = (write_name*)arg;
     int max_width = charaster_name->max_width_write > MESSAGE_SIZE ? MESSAGE_SIZE : charaster_name->max_width_write;
     chat *shared_memory_ptr = *charaster_name->ptr;
@@ -14,8 +15,27 @@ void* input_write(void* arg) {
         perror("sem_open");
         exit(EXIT_FAILURE);
     }
-    
-    while (1) {
+    pthread_mutex_lock(&ncurses_mutex); // Блокируем доступ к ncurses
+    // Пытаемся захватить семафор
+    if (sem_wait(sem) == -1) {
+        perror("sem_wait");
+        pthread_mutex_unlock(&ncurses_mutex);
+        sem_close(sem);
+        exit(EXIT_FAILURE);
+    }
+    cout_people=shared_memory_ptr->cout_people++;
+    shared_memory_ptr->name_array[cout_people].id=uniq_id;
+    strncpy(shared_memory_ptr->name_array[cout_people].name,charaster_name->name, (NAME_SIZE)-1); 
+    // Освобождаем семафор
+    if (sem_post(sem) == -1) {
+        perror("sem_post");
+        pthread_mutex_unlock(&ncurses_mutex);// Разблокируем доступ к ncurses
+        sem_close(sem);
+        exit(EXIT_FAILURE);
+    }
+    pthread_mutex_unlock(&ncurses_mutex); // Разблокируем доступ к ncurses
+
+    while (flag_close!=27) {
         pthread_mutex_lock(&ncurses_mutex); // Блокируем доступ к ncurses
         wrefresh(charaster_name->win); // Обновляем окно
         pthread_mutex_unlock(&ncurses_mutex); // Разблокируем доступ
@@ -78,6 +98,41 @@ void* input_write(void* arg) {
         pthread_mutex_unlock(&ncurses_mutex); // Разблокируем после обновления окна
     }
 
+    pthread_mutex_lock(&ncurses_mutex); // Блокируем доступ к ncurses
+    // Пытаемся захватить семафор
+    if (sem_wait(sem) == -1) {
+        perror("sem_wait");
+        pthread_mutex_unlock(&ncurses_mutex);
+        sem_close(sem);
+        exit(EXIT_FAILURE);
+    }
+    for (int cout_i = 0; cout_i < shared_memory_ptr->cout_people; cout_i++)
+    {
+        if (shared_memory_ptr->name_array[cout_i].id == uniq_id)
+        {
+            // Сдвигаем все элементы после удаляемого влево
+            for (int cout_i_temp = cout_i; cout_i_temp < shared_memory_ptr->cout_people - 1; cout_i_temp++)
+            {
+                shared_memory_ptr->name_array[cout_i_temp] = shared_memory_ptr->name_array[cout_i_temp + 1];
+            }
+
+            // Уменьшаем количество элементов в массиве
+            shared_memory_ptr->cout_people--;
+
+            // Выходим из цикла, так как элемент уже удален
+            break;
+        }
+    }
+    // shared_memory_ptr->cout_people = shared_memory_ptr->cout_people>0 ? 
+    // shared_memory_ptr->cout_people-- : 0;
+    // Освобождаем семафор
+    if (sem_post(sem) == -1) {
+        perror("sem_post");
+        pthread_mutex_unlock(&ncurses_mutex);// Разблокируем доступ к ncurses
+        sem_close(sem);
+        exit(EXIT_FAILURE);
+    }
+    pthread_mutex_unlock(&ncurses_mutex); // Разблокируем доступ к ncurses
     // Закрываем семафор
     sem_close(sem);
 
